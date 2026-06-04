@@ -1,4 +1,5 @@
 # RAG System - Question-Answering Bot
+<img width="1175" height="808" alt="image" src="https://github.com/user-attachments/assets/3a068a68-38dc-477c-bb00-e1f421338217" />
 
 <img width="922" height="575" alt="rag zania" src="https://github.com/user-attachments/assets/7043d064-00af-4ced-a7c3-e7b6d2b8f962" />
 
@@ -128,11 +129,6 @@ Query the RAG system with a single question.
 ### POST /ingest
 Ingest text directly into the knowledge base.
 
-### GET /health
-Health check endpoint.
-
-### GET /stats
-Get system statistics.
 
 ## Usage Example
 
@@ -197,9 +193,3 @@ response = client.post("/query", json={
 8. **Streaming**: Server-Sent Events for streaming responses
 9. **Ingestion Pipeline**: Document parsing, chunking, embedding, and indexing
 
-## Testing
-
-Run tests with:
-```bash
-pytest tests/
-```
