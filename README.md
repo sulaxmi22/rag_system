@@ -1,5 +1,8 @@
 # RAG System - Question-Answering Bot
-<img width="1175" height="808" alt="image" src="https://github.com/user-attachments/assets/3a068a68-38dc-477c-bb00-e1f421338217" />
+
+
+<img width="1189" height="769" alt="image" src="https://github.com/user-attachments/assets/a572f2bf-aa2b-40f3-80dd-cdab86b21c72" />
+
 
 <img width="922" height="575" alt="rag zania" src="https://github.com/user-attachments/assets/7043d064-00af-4ced-a7c3-e7b6d2b8f962" />
 
