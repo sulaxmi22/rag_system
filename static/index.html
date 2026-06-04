@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zania Q&A Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .upload-section {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .upload-section.dragover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            background: #5568d3;
+        }
+        
+        .upload-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .chat-section {
+            margin-top: 30px;
+        }
+        
+        .chat-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .ask-btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+        
+        .ask-btn:hover {
+            background: #5568d3;
+        }
+        
+        .ask-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .answer-section {
+            margin-top: 30px;
+        }
+        
+        .answer-card {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        
+        .question {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .answer {
+            color: #555;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #fee;
+            border-left: 4px solid #f44;
+            padding: 15px;
+            border-radius: 6px;
+            color: #c33;
+            margin-bottom: 15px;
+        }
+        
+        .success {
+            background: #efe;
+            border-left: 4px solid #4c4;
+            padding: 15px;
+            border-radius: 6px;
+            color: #363;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Zania Q&A Bot</h1>
+        <p class="subtitle">Upload a document (PDF or JSON) and ask questions about it</p>
+        
+        <div class="upload-section" id="uploadSection">
+            <p style="margin-bottom: 15px; color: #666;">Drag & drop your documents here or</p>
+            <input type="file" id="fileInput" class="file-input" accept=".pdf,.json" multiple>
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose Files</button>
+            <div id="fileInfo" class="file-info" style="display: none;"></div>
+            <div id="uploadedFiles" style="margin-top: 15px;"></div>
+        </div>
+        
+        <div class="chat-section">
+            <input type="text" id="questionInput" class="chat-input" placeholder="Ask a question about your document..." disabled>
+            <button id="askBtn" class="ask-btn" onclick="askQuestion()" disabled>Ask Question</button>
+        </div>
+        
+        <div class="answer-section" id="answerSection"></div>
+    </div>
+
+    <script>
+        let uploadedFiles = [];
+        
+        const uploadSection = document.getElementById('uploadSection');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const uploadedFilesDiv = document.getElementById('uploadedFiles');
+        const questionInput = document.getElementById('questionInput');
+        const askBtn = document.getElementById('askBtn');
+        const answerSection = document.getElementById('answerSection');
+        
+        // Drag and drop handlers
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        });
+        
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('dragover');
+        });
+        
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFiles(files);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFiles(e.target.files);
+            }
+        });
+        
+        async function handleFiles(files) {
+            const validExtensions = ['.pdf', '.json'];
+            let validFiles = [];
+            
+            for (let file of files) {
+                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                if (validExtensions.includes(fileExtension)) {
+                    validFiles.push(file);
+                } else {
+                    showError(`Skipping ${file.name}: Only PDF and JSON files are supported`);
+                }
+            }
+            
+            if (validFiles.length === 0) {
+                showError('No valid files to upload');
+                return;
+            }
+            
+            // Upload each file
+            for (let file of validFiles) {
+                await handleFile(file);
+            }
+        }
+        
+        async function handleFile(file) {
+            // Upload the file
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('source', 'web_interface');
+            
+            try {
+                showLoading(`Uploading ${file.name}...`);
+                const response = await fetch('http://localhost:8000/upload/document', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    uploadedFiles.push(file);
+                    updateUploadedFilesDisplay();
+                    showSuccess(`${file.name} uploaded successfully!`);
+                    questionInput.disabled = false;
+                    askBtn.disabled = false;
+                    questionInput.focus();
+                } else {
+                    showError(`${file.name}: ${result.detail || 'Failed to upload'}`);
+                }
+            } catch (error) {
+                showError(`Error uploading ${file.name}: ` + error.message);
+            }
+            
+            hideLoading();
+        }
+        
+        function updateUploadedFilesDisplay() {
+            if (uploadedFiles.length === 0) {
+                uploadedFilesDiv.innerHTML = '';
+                fileInfo.style.display = 'none';
+                return;
+            }
+            
+            fileInfo.style.display = 'block';
+            fileInfo.textContent = `${uploadedFiles.length} file(s) uploaded`;
+            
+            uploadedFilesDiv.innerHTML = uploadedFiles.map(file => 
+                `<div style="padding: 5px; background: #f0f0f0; margin: 5px 0; border-radius: 4px; font-size: 12px;">
+                    ${file.name} (${(file.size / 1024).toFixed(2)} KB)
+                </div>`
+            ).join('');
+        }
+        
+        async function askQuestion() {
+            const question = questionInput.value.trim();
+            
+            if (!question) {
+                showError('Please enter a question');
+                return;
+            }
+            
+            if (uploadedFiles.length === 0) {
+                showError('Please upload a document first');
+                return;
+            }
+            
+            askBtn.disabled = true;
+            showLoading('Processing question...');
+            
+            try {
+                // Use the existing query endpoint
+                const response = await fetch('http://localhost:8000/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: question,
+                        user_id: 'web_user',
+                        stream: false
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayAnswer(question, result.response);
+                    questionInput.value = '';
+                } else {
+                    showError(result.detail || 'Failed to get answer');
+                }
+            } catch (error) {
+                showError('Error getting answer: ' + error.message);
+            }
+            
+            hideLoading();
+            askBtn.disabled = false;
+            questionInput.focus();
+        }
+        
+        function displayAnswer(question, answer) {
+            const answerCard = document.createElement('div');
+            answerCard.className = 'answer-card';
+            answerCard.innerHTML = `
+                <div class="question">Q: ${question}</div>
+                <div class="answer">A: ${answer}</div>
+            `;
+            answerSection.insertBefore(answerCard, answerSection.firstChild);
+        }
+        
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            answerSection.insertBefore(errorDiv, answerSection.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            answerSection.insertBefore(successDiv, answerSection.firstChild);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 5000);
+        }
+        
+        function showLoading(message) {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'loading';
+            loadingDiv.id = 'loadingIndicator';
+            loadingDiv.style.margin = '10px 0';
+            answerSection.insertBefore(loadingDiv, answerSection.firstChild);
+        }
+        
+        function hideLoading() {
+            const loadingDiv = document.getElementById('loadingIndicator');
+            if (loadingDiv) {
+                loadingDiv.remove();
+            }
+        }
+        
+        // Allow Enter key to submit question
+        questionInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !askBtn.disabled) {
+                askQuestion();
+            }
+        });
+    </script>
+</body>
+</html>

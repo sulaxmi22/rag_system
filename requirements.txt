@@ -1,0 +1,95 @@
+# Core dependencies for RAG system
+# Each choice has a specific reason - see comments
+
+# Web framework - FastAPI
+# WHY: Async support, automatic OpenAPI docs, type safety, battle-tested
+# ALTERNATIVE: Flask (simpler but no async), Express (Node.js)
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.9.2
+pydantic-settings==2.6.0
+python-multipart==0.0.6
+
+# OpenAI SDK
+# WHY: Official OpenAI SDK for GPT-4o-mini API access
+# ALTERNATIVE: Anthropic SDK (if using Claude), AWS Bedrock SDK
+openai==1.12.0
+
+# LangChain Framework
+# WHY: Orchestration framework for LLM applications with document loaders and chains
+# ALTERNATIVE: LlamaIndex (similar), custom implementation (more control)
+langchain==0.1.20
+langchain-openai==0.0.8
+langchain-community==0.0.20
+
+# Vector database - Qdrant (local for demo, can switch to Pinecone)
+# WHY: Open-source, performant, easy to run locally, supports hybrid search
+# ALTERNATIVE: Pinecone (managed, more expensive), Weaviate (good but complex)
+qdrant-client==1.12.1
+
+# Embeddings - Sentence Transformers
+# WHY: Local embeddings (no API cost), high quality, easy to swap models
+# ALTERNATIVE: OpenAI embeddings (API cost), Cohere embeddings (API cost)
+sentence-transformers==2.2.2
+
+# BM25 / Keyword search - Rank_bm25
+# WHY: Lightweight, fast, implements BM25 algorithm for exact keyword matching
+# ALTERNATIVE: Elasticsearch (full-featured but heavy), Whoosh (Python-only)
+rank-bm25==0.2.2
+
+# Document processing
+# WHY: Handle PDF, Word, and other document formats
+# ALTERNATIVE: PyPDF2 (PDF only), python-docx (Word only)
+pypdf==3.17.4
+python-docx==1.1.0
+
+# Text chunking
+# WHY: Intelligent chunking with overlap for better context
+langchain-text-splitters==0.0.1
+
+# Re-ranking - Cohere (API-based)
+# WHY: State-of-the-art re-ranking, easy integration
+# ALTERNATIVE: Cross-encoder (local, requires GPU), BGE reranker (local)
+cohere==4.39.0
+
+# Caching - Redis
+# WHY: Fast in-memory cache, TTL support, distributed
+# ALTERNATIVE: Memcached (simpler), local cache (not distributed)
+redis==5.0.1
+
+# PII detection
+# WHY: Detect and scrub PII before sending to LLM (GDPR/HIPAA compliance)
+# ALTERNATIVE: Microsoft Presidio (more features), regex (basic)
+presidio-analyzer==2.2.35
+presidio-anonymizer==2.2.35
+
+# Monitoring and logging
+# WHY: Track latency, costs, and system health
+# ALTERNATIVE: Prometheus (more complex), CloudWatch (AWS-specific)
+prometheus-client==0.19.0
+python-json-logger==2.0.7
+
+# Async HTTP client
+# WHY: Non-blocking HTTP calls for better performance
+# ALTERNATIVE: requests (blocking, slower)
+httpx==0.25.2
+
+# Environment variables
+# WHY: Secure configuration management
+# ALTERNATIVE: .env files (not secure for prod), AWS Secrets Manager
+python-dotenv==1.0.0
+
+# Testing
+# WHY: Ensure system works correctly
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Utilities
+# tiktoken==0.5.2  # Token counting for cost tracking - removed for Python 3.13 compatibility
+numpy==1.26.2  # Vector operations
+jq==1.6.0  # JSON parsing for LangChain JSONLoader
+
+# RAGAS - RAG Evaluation Framework
+# WHY: Automated evaluation of RAG systems using LLM-based metrics
+# Measures faithfulness, context precision, context recall, answer relevance
+ragas==0.1.9
