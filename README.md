@@ -1,5 +1,9 @@
 # RAG System - Question-Answering Bot
 
+<img width="922" height="575" alt="rag zania" src="https://github.com/user-attachments/assets/7043d064-00af-4ced-a7c3-e7b6d2b8f962" />
+
+
+
 ## Overview
 
 A production-ready Question-Answering bot that uses Large Language Models to answer questions based on document content. Built with LangChain framework and OpenAI's gpt-4o-mini model, supporting PDF and JSON file uploads for both documents and questions.
