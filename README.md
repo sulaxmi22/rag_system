@@ -3,7 +3,7 @@
 
 <img width="1189" height="769" alt="image" src="https://github.com/user-attachments/assets/a572f2bf-aa2b-40f3-80dd-cdab86b21c72" />
 
-<img width="1400" height="826" alt="image" src="https://github.com/user-attachments/assets/fc006073-c26d-409d-a798-0caf2de6b8ff" />
+<img width="700" height="413" alt="Screenshot 2026-06-04 at 3 50 43 PM" src="https://github.com/user-attachments/assets/ae6b3913-605b-4f2d-8106-1a807da55c36" />
 
 <img width="922" height="575" alt="rag zania" src="https://github.com/user-attachments/assets/7043d064-00af-4ced-a7c3-e7b6d2b8f962" />
 
